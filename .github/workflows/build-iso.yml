@@ -1,0 +1,68 @@
+name: Build FocusWave ISO
+
+on:
+  workflow_dispatch:
+    inputs:
+      fedora_version:
+        description: "Fedora release to build on"
+        required: true
+        default: "45"
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  iso:
+    name: Build ISO
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Check out FocusWave
+        uses: actions/checkout@v4
+
+      - name: Free up disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache \
+                      /usr/local/share/boost /usr/share/swift /usr/local/.ghcup || true
+          sudo docker system prune --all --force || true
+          df -h / /mnt
+
+      - name: Build the ISO inside a Fedora container
+        env:
+          FEDORA_VERSION: ${{ github.event.inputs.fedora_version || '45' }}
+        run: |
+          sudo mkdir -p /mnt/focuswave-work
+          sudo env FEDORA_VERSION="$FEDORA_VERSION" \
+                   SCRATCH_DIR=/mnt/focuswave-work \
+                   OUTPUT_DIR="$GITHUB_WORKSPACE/output" \
+                   CONTAINER_ENGINE=docker \
+                   bash ./build/build-in-container.sh
+
+      - name: Upload the ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: FocusWave-ISO
+          path: |
+            output/*.iso
+            output/*.iso.sha256
+          compression-level: 0
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: Upload the RPMs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: FocusWave-RPMs
+          path: output/rpms/*.rpm
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload build logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: FocusWave-build-logs
+          path: output/logs/
+          retention-days: 7
+          if-no-files-found: ignore
