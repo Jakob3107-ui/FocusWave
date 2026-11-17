@@ -1,0 +1,18 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "FocusWave"
+            }
+        ],
+        "Category": "",
+        "Description": "Sleek and simple: a slim top bar, a floating dock and FocusWave colors",
+        "Id": "org.focuswave.desktop",
+        "License": "GPL-3.0-or-later",
+        "Name": "FocusWave",
+        "Version": "1.0"
+    },
+    "X-Plasma-APIVersion": "2",
+    "X-Plasma-MainScript": "defaults"
+}

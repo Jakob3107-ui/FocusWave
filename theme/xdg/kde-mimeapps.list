@@ -1,0 +1,6 @@
+# FocusWave: Zen is the default web browser (Firefox is used if Zen is not installed)
+[Default Applications]
+text/html=app.zen_browser.zen.desktop;firefox.desktop;
+application/xhtml+xml=app.zen_browser.zen.desktop;firefox.desktop;
+x-scheme-handler/http=app.zen_browser.zen.desktop;firefox.desktop;
+x-scheme-handler/https=app.zen_browser.zen.desktop;firefox.desktop;

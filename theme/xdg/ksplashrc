@@ -1,0 +1,4 @@
+# No splash screen: the desktop appears as soon as it is ready
+[KSplash]
+Engine=none
+Theme=None

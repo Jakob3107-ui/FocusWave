@@ -1,0 +1,12 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "FocusWave"
+            }
+        ],
+        "Id": "FocusWave-Dune",
+        "License": "CC-BY-SA-4.0",
+        "Name": "FocusWave Dune"
+    }
+}

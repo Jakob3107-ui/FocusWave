@@ -1,0 +1,23 @@
+# FocusWave system defaults for KWin (loaded through XDG_CONFIG_DIRS)
+[Plugins]
+focuswave-focusEnabled=true
+blurEnabled=true
+contrastEnabled=true
+scaleEnabled=true
+fadeEnabled=false
+glideEnabled=false
+magiclampEnabled=true
+squashEnabled=false
+
+[Effect-blur]
+BlurStrength=10
+NoiseStrength=0
+
+[TabBox]
+LayoutName=thumbnail_grid
+
+[org.kde.kdecoration2]
+library=org.kde.breeze
+theme=Breeze
+ButtonsOnLeft=XIA
+ButtonsOnRight=
