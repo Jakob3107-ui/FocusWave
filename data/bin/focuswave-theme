@@ -1,0 +1,4 @@
+#!/bin/sh
+# FocusWave command-line tool (see: focuswave-theme --help)
+export PYTHONPATH="/usr/share/focuswave/python${PYTHONPATH:+:$PYTHONPATH}"
+exec /usr/bin/python3 -m focuswave.cli "$@"

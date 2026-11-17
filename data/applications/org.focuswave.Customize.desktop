@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Customize
+GenericName=FocusWave Customize
+Comment=Change colors, wallpaper, layout, window buttons, fonts and Focus Mode
+Exec=focuswave-customize
+Icon=focuswave-customize
+Terminal=false
+Categories=Settings;DesktopSettings;Qt;KDE;
+Keywords=theme;appearance;dark;light;accent;color;wallpaper;dock;taskbar;layout;focus;blur;font;
+StartupNotify=true

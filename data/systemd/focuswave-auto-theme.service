@@ -1,0 +1,6 @@
+[Unit]
+Description=FocusWave automatic light/dark switching
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/focuswave-theme auto

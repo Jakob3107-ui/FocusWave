@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=FocusWave Welcome
+Comment=First-login welcome tour
+Exec=focuswave-customize --welcome --if-first-run
+Icon=focuswave-logo
+Terminal=false
+NoDisplay=true
+OnlyShowIn=KDE;
+X-KDE-autostart-phase=2

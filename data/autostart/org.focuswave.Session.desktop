@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=FocusWave session setup
+Comment=Applies automatic light/dark mode and Focus Mode settings at login
+Exec=focuswave-theme login
+Terminal=false
+NoDisplay=true
+OnlyShowIn=KDE;
+X-KDE-autostart-phase=2
