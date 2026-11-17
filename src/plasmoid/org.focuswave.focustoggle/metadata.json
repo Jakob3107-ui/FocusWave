@@ -1,0 +1,20 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "FocusWave"
+            }
+        ],
+        "Category": "Windows and Tasks",
+        "Description": "Turn Focus Mode on or off: everything except the active window gets blurred.",
+        "Icon": "focuswave-focus",
+        "Id": "org.focuswave.focustoggle",
+        "License": "GPL-3.0-or-later",
+        "Name": "Focus Mode",
+        "Version": "1.0"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-NotificationArea": "true",
+    "X-Plasma-NotificationAreaCategory": "SystemServices"
+}

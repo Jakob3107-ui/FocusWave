@@ -1,0 +1,20 @@
+{
+    "KPackageStructure": "KWin/Script",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "FocusWave"
+            }
+        ],
+        "Category": "Windows",
+        "Description": "Blur everything except the window you choose. Toggle with Meta+F or from the window menu.",
+        "EnabledByDefault": true,
+        "Icon": "focuswave-focus",
+        "Id": "focuswave-focus",
+        "License": "GPL-3.0-or-later",
+        "Name": "FocusWave Focus Mode",
+        "Version": "1.0"
+    },
+    "X-Plasma-API": "javascript",
+    "X-Plasma-MainScript": "code/main.js"
+}

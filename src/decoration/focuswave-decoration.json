@@ -1,0 +1,22 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "FocusWave"
+            }
+        ],
+        "Description": "FocusWave window decoration with macOS-style traffic light buttons",
+        "EnabledByDefault": true,
+        "Id": "org.focuswave.decoration",
+        "License": "GPL-3.0-or-later",
+        "Name": "FocusWave Traffic Lights",
+        "ServiceTypes": [
+            "org.kde.kdecoration3"
+        ]
+    },
+    "org.kde.kdecoration3": {
+        "blur": false,
+        "kcmodule": false,
+        "recommendedBorderSize": "None"
+    }
+}

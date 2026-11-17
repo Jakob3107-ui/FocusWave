@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=org.focuswave.FocusMode
+Exec=/usr/bin/focuswave-focus-overlay
