@@ -1,0 +1,171 @@
+# FocusWave live + installer ISO (Fedora @FEDORA_VERSION@ KDE Plasma base)
+#
+# Rendered by build/build-iso.sh (it fills in the @...@ placeholders) and built with
+# livemedia-creator. Based on Fedora's own live kickstarts (fedora-live-base + KDE).
+
+lang en_US.UTF-8
+keyboard us
+timezone UTC
+selinux --enforcing
+firewall --enabled --service=mdns
+zerombr
+clearpart --all
+part / --size 16384 --fstype ext4
+services --enabled=NetworkManager,ModemManager --disabled=sshd
+network --bootproto=dhcp --device=link --activate
+rootpw --lock --iscrypted locked
+shutdown
+
+# ---------------------------------------------------------------- repositories
+url --mirrorlist="https://mirrors.fedoraproject.org/mirrorlist?repo=fedora-$releasever&arch=$basearch"
+repo --name=updates --mirrorlist="https://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f$releasever&arch=$basearch"
+repo --name=rpmfusion-free --mirrorlist="https://mirrors.rpmfusion.org/mirrorlist?repo=free-fedora-$releasever&arch=$basearch"
+repo --name=rpmfusion-free-updates --mirrorlist="https://mirrors.rpmfusion.org/mirrorlist?repo=free-fedora-updates-released-$releasever&arch=$basearch"
+repo --name=rpmfusion-nonfree --mirrorlist="https://mirrors.rpmfusion.org/mirrorlist?repo=nonfree-fedora-$releasever&arch=$basearch"
+repo --name=rpmfusion-nonfree-updates --mirrorlist="https://mirrors.rpmfusion.org/mirrorlist?repo=nonfree-fedora-updates-released-$releasever&arch=$basearch"
+repo --name=focuswave --baseurl=@FOCUSWAVE_REPO@ --cost=10
+
+# ---------------------------------------------------------------- packages
+# --ignoremissing keeps the build going if an optional app was renamed upstream;
+# the %post section below fails the build if FocusWave itself is missing.
+%packages --ignoremissing
+
+# KDE Plasma desktop (Fedora KDE edition)
+@^kde-desktop-environment
+
+# Live system + installer
+kernel
+kernel-modules
+kernel-modules-extra
+anaconda
+anaconda-install-env-deps
+anaconda-live
+@anaconda-tools
+dracut-live
+livesys-scripts
+glibc-all-langpacks
+-fcoe-utils
+-device-mapper-multipath
+-sdubby
+
+# FocusWave
+focuswave-desktop
+@EXTRA_PACKAGES@
+papirus-icon-theme
+rsms-inter-fonts
+jetbrains-mono-fonts-all
+python3-pyside6
+kf6-kirigami
+kf6-qqc2-desktop-style
+
+# Laptop: Intel thermal management
+thermald
+
+# Apps (the web browser, Zen, comes from Flathub in %post; Firefox is the fallback)
+firefox
+dolphin
+konsole
+kwrite
+ark
+gwenview
+okular
+spectacle
+kcalc
+elisa-player
+haruna
+kde-connect
+filelight
+kinfocenter
+plasma-systemmonitor
+kde-partitionmanager
+flatpak
+plasma-discover
+plasma-discover-flatpak
+plasma-discover-notifier
+
+# RPM Fusion repositories on the installed system (codecs, Intel media driver)
+rpmfusion-free-release
+rpmfusion-nonfree-release
+
+# Keep it lean: no email/PIM suite or bundled games
+-kmail
+-kontact
+-korganizer
+-kaddressbook
+-akregator
+-kmahjongg
+-kmines
+-kpat
+-konversation
+-neochat
+-krdc
+-krfb
+-dragon
+%end
+
+# ---------------------------------------------------------------- setup
+%post --erroronfail
+set -x
+
+# FocusWave must be in the image
+rpm -q focuswave-desktop plasma-workspace kwin dolphin anaconda-live livesys-scripts || exit 1
+
+# --- live system plumbing (from Fedora's live kickstarts)
+systemctl enable livesys.service livesys-late.service || true
+systemctl enable tmp.mount || true
+cat >> /etc/fstab << EOF
+vartmp   /var/tmp    tmpfs   defaults   0  0
+EOF
+if [ -f /etc/sysconfig/livesys ]; then
+    sed -i 's/^livesys_session=.*/livesys_session="kde"/' /etc/sysconfig/livesys
+fi
+
+# --- performance & battery on Intel laptops
+systemctl enable thermald.service || true
+systemctl disable NetworkManager-wait-online.service || true
+systemctl disable dnf-makecache.timer || true
+
+# --- Flathub in the app store (Discover)
+flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo \
+    || echo "WARNING: could not add Flathub (add it later in Discover settings)"
+
+# --- Web browser: Zen (Firefox engine, slick, light on memory) from Flathub.
+#     Firefox stays only if Zen could not be installed, so there is always a browser.
+if flatpak install --system -y --noninteractive flathub app.zen_browser.zen; then
+    BRANCH="$(flatpak info --show-runtime app.zen_browser.zen | awk -F/ '{print $NF}')"
+    if [ -n "$BRANCH" ]; then
+        # Intel hardware video decoding + full codecs inside the Flatpak sandbox
+        flatpak install --system -y --noninteractive flathub "org.freedesktop.Platform.VAAPI.Intel//$BRANCH" || true
+        flatpak install --system -y --noninteractive flathub "org.freedesktop.Platform.ffmpeg-full//$BRANCH" || true
+    fi
+    dnf -y remove firefox || true
+else
+    echo "WARNING: could not install Zen Browser; keeping Firefox"
+fi
+
+# --- full video codecs + Intel hardware video decoding from RPM Fusion
+dnf -y swap ffmpeg-free ffmpeg --allowerasing || echo "WARNING: ffmpeg swap failed"
+dnf -y swap libva-intel-media-driver intel-media-driver --allowerasing || echo "WARNING: intel-media-driver swap failed"
+dnf clean all || true
+
+# --- FocusWave wallpaper on the login screen (SDDM Breeze theme), if SDDM is used
+if [ -d /usr/share/sddm/themes/breeze ]; then
+    cat > /usr/share/sddm/themes/breeze/theme.conf.user << EOF
+[General]
+background=/usr/share/wallpapers/FocusWave-Wave/contents/images_dark/2560x1600.jpg
+type=image
+EOF
+fi
+
+# --- cleanup (from Fedora's live kickstarts)
+rm -f /var/lib/rpm/__db*
+rm -f /core*
+rm -f /var/lib/systemd/random-seed
+echo 'File created by kickstart. See systemd-update-done.service(8).' | tee /etc/.updated > /var/.updated
+rm -f /boot/*-rescue*
+rm -f /etc/machine-id
+touch /etc/machine-id
+
+# --- make sure SELinux labels are correct even when built on a host without SELinux
+setfiles -F -e /proc -e /sys -e /dev /etc/selinux/targeted/contexts/files/file_contexts / || true
+%end
