@@ -1,0 +1,12 @@
+FocusWave
+=========
+
+Code (C++, Python, QML, JavaScript, shell scripts, kickstart, specs):
+  GNU General Public License, version 3 or (at your option) any later version.
+  Full text: https://www.gnu.org/licenses/gpl-3.0.txt
+
+Artwork (wallpapers in theme/wallpapers, icons in theme/icons):
+  Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+  Full text: https://creativecommons.org/licenses/by-sa/4.0/legalcode
+
+FocusWave is built on Fedora Linux and KDE Plasma, which keep their own licenses.
